@@ -1,83 +1,66 @@
-// Select the node that will be observed for mutations
-const targetNode = document.querySelector("body");
+let fullscreen_mode = false
 
-// Options for the observer (which mutations to observe)
-const config = { attributes: true, childList: true, subtree: true };
-
-// Callback function to execute when mutations are observed
-const callback = (mutationList, observer) => {
-
-  for (const mutation of mutationList) {
-    if (mutation.target.tagName === "VIDEO"){
-      handle_video();
-      observer.disconnect();
-      break;
-    }
-  }
-
-};
-
-
-const handle_video = () => {
+// funkcia, ktora nastavuje aby video zaberalo 100% priestoru
+const enter_fullscreen_video_mode = () => {
 
   const video = document.querySelector("video")
+
+  if (video == null){
+    console.log("Na stranke nie je element Video (mozno je na stranke iframe)")
+    return
+  }
+
   video.style.width = "100%"
   video.style.height = "100%"
   video.style.position = "fixed"
-  video.style.top = "0";
-  video.style.left = "0";
+  video.style.top = "0"
+  video.style.left = "0"
 
-  parentDiv = video.parentNode;
+  const parentDiv = video.parentNode
 
-  parentParentDiv = parentDiv.parentNode
+  const parentParentDiv = parentDiv.parentNode
   parentParentDiv.style.width = "100%"
   parentParentDiv.style.height = "100%"
   parentParentDiv.style.zIndex = 50000
   parentParentDiv.style.position = "fixed"
-  parentParentDiv.style.top = "0";
-  parentParentDiv.style.left = "0";
+  parentParentDiv.style.top = "0"
+  parentParentDiv.style.left = "0"
+
+  parentParentDiv.requestFullscreen()
+  fullscreen_mode = true
 
 }
 
-// Create an observer instance linked to the callback function
-const observer = new MutationObserver(callback);
+const close_fullscreen_video_mode = () => {
 
-// Start observing the target node for configured mutations
-observer.observe(targetNode, config);
+  const video = document.querySelector("video")
+  if (video != null){
+    video.style.position = "relative"
+  
+    const parentDiv = video.parentNode
 
-// Later, you can stop observing
-//observer.disconnect();
+    const parentParentDiv = parentDiv.parentNode
+    parentParentDiv.style.zIndex = 0
+    parentParentDiv.style.position = "relative"
+  }
 
+  if(document.fullscreenElement){
+    document.exitFullscreen()
+  }
+  fullscreen_mode = false
 
-// setInterval(() => {
-//   video = document.querySelector("video")
-//   console.log("APPP");
-//   console.log(video);
-// }, "1000");
+}
 
+console.log("ROZSIRENIE FUNGUJE");
 
-
-
-
-// const article = document.querySelector("article");
-
-// // `document.querySelector` may return null if the selector doesn't match anything.
-// if (article) {
-//   const text = article.textContent;
-//   const wordMatchRegExp = /[^\s]+/g; // Regular expression
-//   const words = text.matchAll(wordMatchRegExp);
-//   // matchAll returns an iterator, convert to array to get word count
-//   const wordCount = [...words].length;
-//   const readingTime = Math.round(wordCount / 200);
-//   const badge = document.createElement("p");
-//   // Use the same styling as the publish information in an article's header
-//   badge.classList.add("color-secondary-text", "type--caption");
-//   badge.textContent = `⏱️ ${readingTime} min read`;
-
-//   // Support for API reference docs
-//   const heading = article.querySelector("h1");
-//   // Support for article docs with date
-//   const date = article.querySelector("time")?.parentNode;
-
-//   (date ?? heading).insertAdjacentElement("afterend", badge);
-// }
+// nabindovanie fullscreenu na tlacidlo "f"
+document.onkeydown = (e) => {
+  if (e.which == 70) {
+    if (!fullscreen_mode){
+      enter_fullscreen_video_mode()
+    }
+    else {
+      close_fullscreen_video_mode()
+    } 
+  }
+};

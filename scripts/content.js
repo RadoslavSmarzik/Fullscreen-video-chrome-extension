@@ -1,3 +1,5 @@
+console.log("Fullcreen mode extension")
+
 let fullscreen_mode = false
 
 // funkcia, ktora nastavuje aby video zaberalo 100% priestoru
@@ -28,6 +30,7 @@ const enter_fullscreen_video_mode = () => {
 
   parentParentDiv.requestFullscreen()
   fullscreen_mode = true
+  console.log("Fullscreen ON");
 
 }
 
@@ -46,12 +49,11 @@ const close_fullscreen_video_mode = () => {
 
   if(document.fullscreenElement){
     document.exitFullscreen()
+    console.log("Fullscreen OFF");
   }
   fullscreen_mode = false
 
 }
-
-console.log("ROZSIRENIE FUNGUJE");
 
 // nabindovanie fullscreenu na tlacidlo "f"
 document.onkeydown = (e) => {
